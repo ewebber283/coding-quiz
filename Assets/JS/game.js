@@ -41,7 +41,7 @@ let questions = [
         choice1: 'Morgan Freeman',
         choice2: 'James Earl Jones',
         choice3: 'Sam Elliot',
-        choice4: 'Daivd Attenborough',
+        choice4: 'David Attenborough',
         answer: 4,
     },
     {
@@ -59,26 +59,26 @@ const SCORE_POINTS = 100;
 const MAX_QUESTIONS = 5;
 
 startGame = () => {
-    questionCounter = 0;
-    score = 0;
-    availableQuestions = [...questions];
-    getNewQuestion();
-};
+    questionCounter = 0
+    score = 0
+    availableQuestions = [...questions]
+    getNewQuestion()
+}
 
 getNewQuestion = () => {
     if(availableQuestions.length === 0 || questionCounter > MAX_QUESTIONS) {
-        localStorage.setItem('mostRecentScore', score);
+        localStorage.setItem('mostRecentScore', score)
 
-        return window.location.assign('/end.html');
+        return window.location.assign('/end.html')
     }
 
-    questionCounter++;
+    questionCounter++
     //calculate question you are on and percentage
-    progressText.innerText = `Question ${questionCounter} of $ ${MAX_QUESTIONS}`;
-    progressBarFull.style.width = `${(questionCounter/MAX_QUESTIONS) * 100}%`;
+    progressText.innerText = `Question ${questionCounter} of ${MAX_QUESTIONS}`
+    progressBarFull.style.width = `${(questionCounter/MAX_QUESTIONS) * 100}%`
 
     //.floor to round to random number to calculate value of questionsIndex
-    const questionsIndex = Math.floor(Math.random() * availableQuestions.length);
+    const questionsIndex = Math.floor(Math.random() * availableQuestions.length)
 
     //keep track of what question you are on
     currentQuestion = availableQuestions[questionsIndex]
@@ -89,7 +89,40 @@ getNewQuestion = () => {
         choice.innerText = currentQuestion['choice' + number]
     })
 
-    availableQuestions.splice(questionsIndex, 1);
+    availableQuestions.splice(questionsIndex, 1)
 
-    acceptingAnswers = true;
+    acceptingAnswers = true
 }
+
+choices.forEach = (choice => {
+    choice.addEventListener ('click', e => {
+        
+        if(!acceptingAnswers) return
+
+        acceptingAnswers = false
+        const selectedChoice = e.target
+        //dataset of number refers to choices 1-4
+        const selectedAnswer = selectedChoice.dataset['number']
+        //ternary operator
+        let classToApply = selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect'
+
+        if(classToApply === 'correct') {
+            incrementScore(SCORE_POINTS)
+        }
+        //add whenever answer is right
+        selectedChoice.parentElement.classList.add(classToApply)
+        //have time to show correct answer
+        setTimeout(() => {
+            selectedChoice.parentElement.classList.remove(classToApply)
+            getNewQuestion()
+        }, 1000)
+    })
+})
+
+incrementScore = num => {
+    score += num
+    scoreText.innerText = score
+
+}
+
+startGame();
