@@ -121,9 +121,3 @@ input::placeholder {
 #saveScoreBtn {
     border: none;
 }
-
-.fa-home {
-    margin-left: 1rem;
-    font-size: 2rem;
-    color: blue;
-}
